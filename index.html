@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Video Project Intake Form</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============================================================
+     CONFIG — paste your Google Apps Script Web App URL below.
+     Instructions are in README.md (Step 2).
+     ============================================================ */
+
+  :root {
+    --paper:      #FBF4E7;
+    --paper-2:    #FFFDF7;
+    --card:       #FFFFFF;
+    --ink:        #2B2620;
+    --ink-soft:   #6E6557;
+    --line:       #E7DCC5;
+    --line-soft:  #F0E8D6;
+    --coral:      #D9543B;
+    --coral-dk:   #B83F2A;
+    --teal:       #2F6F5E;
+    --gold:       #E6A532;
+    --radius:     16px;
+    --shadow:     0 1px 2px rgba(43,38,32,.04), 0 12px 32px -16px rgba(43,38,32,.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { background: var(--paper); }
+
+  body {
+    font-family: 'Hanken Grotesk', sans-serif;
+    color: var(--ink);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    /* warm paper grain */
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(217,84,59,.06), transparent 38%),
+      radial-gradient(circle at 88% 92%, rgba(47,111,94,.06), transparent 40%);
+    background-attachment: fixed;
+  }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 22px 90px; }
+
+  /* ---------- HEADER ---------- */
+  header {
+    text-align: center;
+    padding: 64px 0 30px;
+    position: relative;
+  }
+  .kicker {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: .72rem; font-weight: 600; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--coral);
+    background: rgba(217,84,59,.09);
+    padding: 7px 14px; border-radius: 100px;
+    margin-bottom: 18px;
+  }
+  .kicker::before { content: "●"; font-size: .55rem; }
+
+  header h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(2.1rem, 6vw, 3.1rem);
+    line-height: 1.08;
+    letter-spacing: -.015em;
+  }
+  header h1 em { font-style: italic; color: var(--coral); }
+
+  .intro {
+    max-width: 480px; margin: 16px auto 0;
+    color: var(--ink-soft); font-size: 1.02rem;
+  }
+  .signoff-line {
+    margin-top: 14px; font-family: 'Fraunces', serif;
+    font-style: italic; font-size: 1rem; color: var(--teal);
+  }
+
+  /* ---------- DEMO BANNER ---------- */
+  .demo-banner {
+    display: none;
+    margin: 0 0 26px; padding: 12px 16px;
+    background: #FDF3D6; border: 1px dashed var(--gold);
+    border-radius: 12px; font-size: .86rem; color: #8A6312;
+  }
+  .demo-banner strong { color: #6E4D08; }
+
+  /* ---------- CARD / SECTION ---------- */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px 26px 30px;
+    margin-bottom: 20px;
+  }
+  .card-head { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 22px; }
+  .num {
+    flex: none;
+    font-family: 'Fraunces', serif; font-weight: 600;
+    font-size: 1.15rem; color: var(--paper-2);
+    background: var(--ink);
+    width: 38px; height: 38px; border-radius: 11px;
+    display: grid; place-items: center;
+  }
+  .card:nth-of-type(odd) .num { background: var(--coral); }
+  .card:nth-of-type(even) .num { background: var(--teal); }
+
+  .card-head h2 {
+    font-family: 'Fraunces', serif; font-weight: 600;
+    font-size: 1.32rem; line-height: 1.2; letter-spacing: -.01em;
+  }
+  .card-head .sub { font-size: .9rem; color: var(--ink-soft); margin-top: 3px; }
+
+  /* ---------- FIELDS ---------- */
+  .field { margin-bottom: 20px; }
+  .field:last-child { margin-bottom: 0; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 540px) { .row { grid-template-columns: 1fr; } }
+
+  label.q {
+    display: block; font-weight: 600; font-size: .96rem;
+    margin-bottom: 3px;
+  }
+  .hint { display: block; font-size: .83rem; color: var(--ink-soft); margin-bottom: 9px; }
+  .req { color: var(--coral); font-weight: 700; }
+
+  input[type=text], input[type=email], input[type=tel],
+  input[type=url], input[type=date], textarea, select {
+    width: 100%;
+    font-family: inherit; font-size: .96rem; color: var(--ink);
+    background: var(--paper-2);
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 11px 13px;
+    transition: border-color .15s, box-shadow .15s, background .15s;
+  }
+  textarea { resize: vertical; min-height: 78px; line-height: 1.5; }
+  input::placeholder, textarea::placeholder { color: #B7AC97; }
+  input:focus, textarea:focus, select:focus {
+    outline: none; border-color: var(--coral);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(217,84,59,.1);
+  }
+  select { appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%236E6557' stroke-width='2'><path d='M2 4l5 5 5-5'/></svg>");
+    background-repeat: no-repeat; background-position: right 13px center;
+    padding-right: 36px;
+  }
+
+  /* ---------- CHIP CHOICES (radio + checkbox) ---------- */
+  .chips { display: flex; flex-wrap: wrap; gap: 9px; }
+  .chip {
+    position: relative; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: .9rem; font-weight: 500;
+    padding: 9px 14px;
+    background: var(--paper-2);
+    border: 1.5px solid var(--line);
+    border-radius: 100px;
+    transition: all .14s ease;
+    user-select: none;
+  }
+  .chip input { position: absolute; opacity: 0; pointer-events: none; }
+  .chip .dot {
+    width: 15px; height: 15px; border-radius: 50%;
+    border: 1.5px solid #C9BC9F; flex: none;
+    display: grid; place-items: center;
+    transition: all .14s ease;
+  }
+  .chip.box .dot { border-radius: 5px; }
+  .chip .dot::after {
+    content: ""; width: 7px; height: 7px; border-radius: 50%;
+    background: #fff; transform: scale(0); transition: transform .14s ease;
+  }
+  .chip.box .dot::after { border-radius: 1px; }
+  .chip:hover { border-color: #D2C4A4; }
+  .chip:has(input:checked) {
+    background: #FCEDE9; border-color: var(--coral); color: var(--coral-dk);
+  }
+  .chip:has(input:checked) .dot { border-color: var(--coral); background: var(--coral); }
+  .chip:has(input:checked) .dot::after { transform: scale(1); }
+  .chip:has(input:focus-visible) { box-shadow: 0 0 0 4px rgba(217,84,59,.13); }
+
+  .chip-note { font-size: .82rem; color: var(--ink-soft); margin-top: 8px; }
+
+  /* ---------- CALLOUT (the scope/cost note + agreement) ---------- */
+  .callout {
+    background: #FCF6E8; border: 1px solid var(--line-soft);
+    border-left: 3px solid var(--gold);
+    border-radius: 10px; padding: 13px 15px;
+    font-size: .86rem; color: var(--ink-soft);
+  }
+  .callout strong { color: var(--ink); }
+
+  /* ---------- AGREEMENT ---------- */
+  .agreement-list {
+    list-style: none; margin: 4px 0 18px;
+  }
+  .agreement-list li {
+    position: relative; padding: 9px 0 9px 30px;
+    font-size: .92rem; border-bottom: 1px dashed var(--line-soft);
+  }
+  .agreement-list li:last-child { border-bottom: none; }
+  .agreement-list li::before {
+    content: "✓"; position: absolute; left: 0; top: 9px;
+    color: var(--teal); font-weight: 700;
+    background: rgba(47,111,94,.1);
+    width: 20px; height: 20px; border-radius: 50%;
+    display: grid; place-items: center; font-size: .72rem;
+  }
+
+  .agree-confirm {
+    display: flex; gap: 11px; align-items: flex-start;
+    padding: 13px 15px; background: #F1F6F2;
+    border: 1.5px solid #CFE3D6; border-radius: 10px;
+    cursor: pointer; font-size: .9rem; font-weight: 500;
+  }
+  .agree-confirm input { margin-top: 2px; width: 17px; height: 17px; accent-color: var(--teal); flex: none; }
+
+  /* ---------- SUBMIT ---------- */
+  .submit-row { text-align: center; margin-top: 30px; }
+  button.send {
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-size: 1.02rem; font-weight: 600; color: #fff;
+    background: var(--coral);
+    border: none; border-radius: 100px;
+    padding: 15px 44px; cursor: pointer;
+    box-shadow: 0 10px 22px -8px rgba(217,84,59,.6);
+    transition: transform .12s ease, background .15s ease;
+  }
+  button.send:hover { background: var(--coral-dk); transform: translateY(-2px); }
+  button.send:active { transform: translateY(0); }
+  button.send:disabled { background: #C9BC9F; box-shadow: none; cursor: wait; }
+  .submit-note { font-size: .82rem; color: var(--ink-soft); margin-top: 12px; }
+
+  footer {
+    text-align: center; margin-top: 38px;
+    font-size: .8rem; color: var(--ink-soft);
+  }
+  footer .heart { color: var(--coral); }
+
+  /* ---------- SUCCESS STATE ---------- */
+  .success {
+    display: none; text-align: center;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 56px 30px;
+  }
+  .success .tick {
+    width: 64px; height: 64px; margin: 0 auto 20px;
+    background: var(--teal); border-radius: 50%;
+    display: grid; place-items: center;
+    color: #fff; font-size: 1.8rem;
+    animation: pop .4s ease;
+  }
+  @keyframes pop { 0%{transform:scale(0)} 70%{transform:scale(1.12)} 100%{transform:scale(1)} }
+  .success h2 {
+    font-family: 'Fraunces', serif; font-weight: 600;
+    font-size: 1.8rem; margin-bottom: 8px;
+  }
+  .success p { color: var(--ink-soft); max-width: 380px; margin: 0 auto 20px; }
+  .success button {
+    font-family: inherit; font-size: .9rem; font-weight: 600;
+    color: var(--coral); background: none;
+    border: 1.5px solid var(--coral); border-radius: 100px;
+    padding: 10px 22px; cursor: pointer;
+  }
+
+  .err-msg {
+    display: none; margin-top: 12px; font-size: .86rem;
+    color: var(--coral-dk); font-weight: 500;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <span class="kicker">Video Project Intake</span>
+    <h1>Let's plan your <em>video</em> — together.</h1>
+    <p class="intro">
+      Fill this out so I understand exactly what you need. No editing
+      experience required — just answer honestly, and skip anything
+      you're unsure about. We'll figure it out as a team.
+    </p>
+    <p class="signoff-line">— Your friendly video editor</p>
+  </header>
+
+  <div class="demo-banner" id="demoBanner">
+    <strong>Editor's note:</strong> This form isn't connected to your
+    Google Sheet yet. Add your script link in <strong>index.html → CONFIG</strong>
+    (see README, Step 2). For now, submissions won't be saved.
+  </div>
+
+  <form id="intakeForm" novalidate>
+
+    <!-- ================= 1 · PROJECT BASICS ================= -->
+    <section class="card">
+      <div class="card-head">
+        <span class="num">1</span>
+        <div>
+          <h2>Project Basics</h2>
+          <p class="sub">First, the quick details so I know who I'm working with.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label class="q">Your name <span class="req">*</span></label>
+          <input type="text" name="Client name" placeholder="e.g. Maria Santos" required />
+        </div>
+        <div class="field">
+          <label class="q">Best way to reach you <span class="req">*</span></label>
+          <input type="text" name="Contact" placeholder="Email, phone, or FB/IG handle" required />
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="q">What kind of video is this?</label>
+        <span class="hint">Pick the closest one — it helps me set the right pace and style.</span>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="Video type" value="School project"><span class="dot"></span>School project</label>
+          <label class="chip"><input type="radio" name="Video type" value="Vlog"><span class="dot"></span>Vlog</label>
+          <label class="chip"><input type="radio" name="Video type" value="Org / club promo"><span class="dot"></span>Org / club promo</label>
+          <label class="chip"><input type="radio" name="Video type" value="Event recap"><span class="dot"></span>Event recap</label>
+          <label class="chip"><input type="radio" name="Video type" value="Reels / short content"><span class="dot"></span>Reels / short content</label>
+          <label class="chip"><input type="radio" name="Video type" value="Other"><span class="dot"></span>Something else</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="q">Where will it be posted or shown?</label>
+        <span class="hint">Choose all that apply — this decides the video size and format.</span>
+        <div class="chips">
+          <label class="chip box"><input type="checkbox" name="Where posted" value="TikTok"><span class="dot"></span>TikTok</label>
+          <label class="chip box"><input type="checkbox" name="Where posted" value="YouTube"><span class="dot"></span>YouTube</label>
+          <label class="chip box"><input type="checkbox" name="Where posted" value="Instagram / FB Reels"><span class="dot"></span>Instagram / FB Reels</label>
+          <label class="chip box"><input type="checkbox" name="Where posted" value="Class submission"><span class="dot"></span>Class submission</label>
+          <label class="chip box"><input type="checkbox" name="Where posted" value="Other"><span class="dot"></span>Other</label>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 2 · GOALS & VISION ================= -->
+    <section class="card">
+      <div class="card-head">
+        <span class="num">2</span>
+        <div>
+          <h2>Project Goals &amp; Vision</h2>
+          <p class="sub">The "why" behind the video. Even one sentence is fine.</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="q">What is this video for?</label>
+        <span class="hint">e.g. "A 2-minute documentary for my Filipino class" or "To promote our org's recruitment week."</span>
+        <textarea name="Purpose" placeholder="Tell me the story in your own words..."></textarea>
+      </div>
+
+      <div class="field">
+        <label class="q">If the video could do just ONE thing well, what would it be?</label>
+        <span class="hint">Your most important goal — e.g. "Make people laugh," "Get a high grade," "Get more sign-ups."</span>
+        <input type="text" name="Most important outcome" placeholder="The one outcome that matters most" />
+      </div>
+    </section>
+
+    <!-- ================= 3 · VISUAL STYLE ================= -->
+    <section class="card">
+      <div class="card-head">
+        <span class="num">3</span>
+        <div>
+          <h2>Visual Style &amp; Branding</h2>
+          <p class="sub">How it should look and feel. No design knowledge needed.</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="q">What overall vibe are you going for?</label>
+        <span class="hint">"Vibe" just means the mood. Pick one or two.</span>
+        <div class="chips">
+          <label class="chip box"><input type="checkbox" name="Vibe" value="Fun & energetic"><span class="dot"></span>Fun &amp; energetic</label>
+          <label class="chip box"><input type="checkbox" name="Vibe" value="Calm & serious"><span class="dot"></span>Calm &amp; serious</label>
+          <label class="chip box"><input type="checkbox" name="Vibe" value="Cinematic & dramatic"><span class="dot"></span>Cinematic &amp; dramatic</label>
+          <label class="chip box"><input type="checkbox" name="Vibe" value="Clean & minimal"><span class="dot"></span>Clean &amp; minimal</label>
+          <label class="chip box"><input type="checkbox" name="Vibe" value="Cute & playful"><span class="dot"></span>Cute &amp; playful</label>
+        </div>
+        <p class="chip-note">Cinematic = movie-like, with smooth shots and moody color.</p>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label class="q">Any color preferences?</label>
+          <span class="hint">Colors to use — or avoid. "Not sure" is okay.</span>
+          <input type="text" name="Color preferences" placeholder="e.g. school colors: maroon & gold" />
+        </div>
+        <div class="field">
+          <label class="q">Logos or specific fonts to use?</label>
+          <span class="hint">If you have a logo/font file, just mention it — you can send it later.</span>
+          <input type="text" name="Fonts / logos" placeholder="e.g. Org logo + the font from our poster" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="q">Reference links — videos with a style you like</label>
+        <span class="hint">Paste 1–2 links (TikTok, YouTube, IG). This is the fastest way to show me the look you want.</span>
+        <input type="url" name="Reference link 1" placeholder="Reference link 1" style="margin-bottom:10px" />
+        <input type="url" name="Reference link 2" placeholder="Reference link 2 (optional)" />
+      </div>
+    </section>
+
+    <!-- ================= 4 · CONTENT & ASSETS ================= -->
+    <section class="card">
+      <div class="card-head">
+        <span class="num">4</span>
+        <div>
+          <h2>Content &amp; Assets</h2>
+          <p class="sub">"Assets" = the raw materials for your video (clips, photos, music).</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="q">What will YOU provide?</label>
+        <span class="hint">Tick what you already have or can get. No worries if it's just a little.</span>
+        <div class="chips">
+          <label class="chip box"><input type="checkbox" name="Client provides" value="Video clips"><span class="dot"></span>Video clips</label>
+          <label class="chip box"><input type="checkbox" name="Client provides" value="Photos"><span class="dot"></span>Photos</label>
+          <label class="chip box"><input type="checkbox" name="Client provides" value="Music / audio"><span class="dot"></span>Music / audio</label>
+          <label class="chip box"><input type="checkbox" name="Client provides" value="Logos / graphics"><span class="dot"></span>Logos / graphics</label>
+          <label class="chip box"><input type="checkbox" name="Client provides" value="Script / captions"><span class="dot"></span>Script / captions</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="q">What should I source or create for you?</label>
+        <span class="hint">"Source" = find for you. Tick anything you'd like me to handle.</span>
+        <div class="chips">
+          <label class="chip box"><input type="checkbox" name="Editor sources" value="Background music"><span class="dot"></span>Background music</label>
+          <label class="chip box"><input type="checkbox" name="Editor sources" value="Stock footage / photos"><span class="dot"></span>Stock footage / photos</label>
+          <label class="chip box"><input type="checkbox" name="Editor sources" value="Text / titles & captions"><span class="dot"></span>Text &amp; captions</label>
+          <label class="chip box"><input type="checkbox" name="Editor sources" value="Graphics / simple animation"><span class="dot"></span>Graphics / animation</label>
+          <label class="chip box"><input type="checkbox" name="Editor sources" value="Sound effects"><span class="dot"></span>Sound effects</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label class="q">How long should the final video be?</label>
+          <span class="hint">A rough idea is fine.</span>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="Video length" value="Under 30 sec"><span class="dot"></span>Under 30s</label>
+            <label class="chip"><input type="radio" name="Video length" value="30–60 sec"><span class="dot"></span>30–60s</label>
+            <label class="chip"><input type="radio" name="Video length" value="1–3 min"><span class="dot"></span>1–3 min</label>
+            <label class="chip"><input type="radio" name="Video length" value="3–5 min"><span class="dot"></span>3–5 min</label>
+            <label class="chip"><input type="radio" name="Video length" value="5 min+"><span class="dot"></span>5 min+</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="q">Video shape (aspect ratio)</label>
+        <span class="hint">"Aspect ratio" is just the shape of the screen. Pick where it'll mostly be watched.</span>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="Aspect ratio" value="Vertical 9:16"><span class="dot"></span>Vertical — TikTok / Reels</label>
+          <label class="chip"><input type="radio" name="Aspect ratio" value="Square 1:1"><span class="dot"></span>Square — feed posts</label>
+          <label class="chip"><input type="radio" name="Aspect ratio" value="Horizontal 16:9"><span class="dot"></span>Wide — YouTube / class</label>
+          <label class="chip"><input type="radio" name="Aspect ratio" value="Not sure"><span class="dot"></span>Not sure</label>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 5 · DEADLINES & REVISIONS ================= -->
+    <section class="card">
+      <div class="card-head">
+        <span class="num">5</span>
+        <div>
+          <h2>Deadlines &amp; Revisions</h2>
+          <p class="sub">When you need it, and how many rounds of changes are included.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label class="q">I'd like to see a first draft by</label>
+          <span class="hint">A "draft" is an early version for you to review.</span>
+          <input type="date" name="First draft date" />
+        </div>
+        <div class="field">
+          <label class="q">Final video needed by <span class="req">*</span></label>
+          <span class="hint">Your hard deadline — e.g. submission day.</span>
+          <input type="date" name="Final delivery date" required />
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="q">How many rounds of revisions?</label>
+        <span class="hint">A "revision round" = one batch of changes after a draft. 2 rounds suits most student projects.</span>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="Revision rounds" value="1 round"><span class="dot"></span>1 round</label>
+          <label class="chip"><input type="radio" name="Revision rounds" value="2 rounds"><span class="dot"></span>2 rounds</label>
+          <label class="chip"><input type="radio" name="Revision rounds" value="3 rounds"><span class="dot"></span>3 rounds</label>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 6 · BUDGET ================= -->
+    <section class="card">
+      <div class="card-head">
+        <span class="num">6</span>
+        <div>
+          <h2>Budget</h2>
+          <p class="sub">An honest range helps me suggest the best fit for you.</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="q">What budget range works for you? (PHP)</label>
+        <span class="hint">No pressure — even a rough range is helpful. We can adjust scope to fit.</span>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="Budget range" value="Below ₱500"><span class="dot"></span>Below ₱500</label>
+          <label class="chip"><input type="radio" name="Budget range" value="₱500 – ₱1,000"><span class="dot"></span>₱500 – ₱1,000</label>
+          <label class="chip"><input type="radio" name="Budget range" value="₱1,000 – ₱2,500"><span class="dot"></span>₱1,000 – ₱2,500</label>
+          <label class="chip"><input type="radio" name="Budget range" value="₱2,500 – ₱5,000"><span class="dot"></span>₱2,500 – ₱5,000</label>
+          <label class="chip"><input type="radio" name="Budget range" value="₱5,000+"><span class="dot"></span>₱5,000+</label>
+          <label class="chip"><input type="radio" name="Budget range" value="Not sure — let's discuss"><span class="dot"></span>Not sure — let's discuss</label>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>How budget works:</strong> the final price depends on the
+        <strong>scope</strong> — how long the video is, how much footage I sort
+        through, the number of graphics or animations, and how many revision
+        rounds you choose. A short, simple edit costs less than a long, effects-heavy
+        one. I'll always confirm a final price with you before we start — no surprises.
+      </div>
+    </section>
+
+    <!-- ================= 7 · MINI AGREEMENT ================= -->
+    <section class="card">
+      <div class="card-head">
+        <span class="num">7</span>
+        <div>
+          <h2>Mini Agreement</h2>
+          <p class="sub">A short, plain-language summary so we're both on the same page.</p>
+        </div>
+      </div>
+
+      <ul class="agreement-list">
+        <li><strong>Deliverables:</strong> I'll deliver one final edited video in the agreed length and format, exported ready to post or submit.</li>
+        <li><strong>Revisions:</strong> Your price includes the revision rounds chosen above. Extra changes after that may have a small added fee, agreed first.</li>
+        <li><strong>Payment:</strong> A 50% downpayment confirms your slot; the remaining 50% is due before I send the final file. Terms can be adjusted by mutual agreement.</li>
+        <li><strong>Working together:</strong> Clear, timely replies and complete assets keep us on schedule. If a deadline shifts, just tell me early and we'll adjust kindly.</li>
+      </ul>
+
+      <label class="agree-confirm">
+        <input type="checkbox" name="Agreement accepted" value="Yes — agreed" required />
+        <span>I've read the points above and I'm happy to proceed on these terms.</span>
+      </label>
+
+      <div class="row" style="margin-top:18px">
+        <div class="field" style="margin-bottom:0">
+          <label class="q">Your name (as sign-off)</label>
+          <input type="text" name="Signature" placeholder="Type your full name" />
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label class="q">Date</label>
+          <input type="date" name="Sign-off date" />
+        </div>
+      </div>
+    </section>
+
+    <div class="submit-row">
+      <button type="submit" class="send" id="sendBtn">Send My Project Brief</button>
+      <p class="submit-note">I'll review your answers and reply within 1–2 days. Salamat! 🙌</p>
+      <p class="err-msg" id="errMsg">Hmm, something went wrong. Please check the highlighted fields and try again.</p>
+    </div>
+  </form>
+
+  <!-- ================= SUCCESS ================= -->
+  <div class="success" id="successCard">
+    <div class="tick">✓</div>
+    <h2>Got it — thank you!</h2>
+    <p>Your project brief has been sent. I'll look it over and get back to you
+       within 1–2 days to confirm the details and price. Excited to work with you!</p>
+    <button type="button" id="resetBtn">Submit another project</button>
+  </div>
+
+  <footer>
+    Made with <span class="heart">♥</span> for student creators · Your friendly Filipino video editor
+  </footer>
+
+</div>
+
+<script>
+  /* =========================================================
+     CONFIG — paste your Google Apps Script Web App URL here.
+     It looks like: https://script.google.com/macros/s/AKfy.../exec
+     ========================================================= */
+  const SCRIPT_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
+
+  const form    = document.getElementById('intakeForm');
+  const sendBtn = document.getElementById('sendBtn');
+  const errMsg  = document.getElementById('errMsg');
+  const success = document.getElementById('successCard');
+
+  // Show demo banner if the script URL hasn't been set yet
+  const isConfigured = SCRIPT_URL && !SCRIPT_URL.includes('PASTE_YOUR');
+  if (!isConfigured) {
+    document.getElementById('demoBanner').style.display = 'block';
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    errMsg.style.display = 'none';
+
+    // Native validation for required fields
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    // Collect every field; checkbox groups become comma-joined values
+    const fd = new FormData(form);
+    const payload = { "Submitted": new Date().toLocaleString('en-PH') };
+    for (const key of new Set([...fd.keys()])) {
+      payload[key] = fd.getAll(key).join(', ');
+    }
+
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Sending...';
+
+    try {
+      if (isConfigured) {
+        // 'no-cors' + text/plain avoids CORS preflight with Apps Script.
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+      } else {
+        // Demo mode — log to console so the editor can preview the data
+        console.log('Intake form submission (demo, not saved):', payload);
+        await new Promise(r => setTimeout(r, 600));
+      }
+      form.style.display = 'none';
+      document.getElementById('demoBanner').style.display = 'none';
+      success.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      console.error(err);
+      errMsg.style.display = 'block';
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Send My Project Brief';
+    }
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function () {
+    form.reset();
+    form.style.display = 'block';
+    success.style.display = 'none';
+    sendBtn.disabled = false;
+    sendBtn.textContent = 'Send My Project Brief';
+    if (!isConfigured) document.getElementById('demoBanner').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+</body>
+</html>
